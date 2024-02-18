@@ -1,0 +1,24 @@
+#Manhattan plot and Q-Q plot were drawn based on plink GWAS results
+#Screening for significant P-values
+
+
+library(qqman)
+setwd("--")
+
+#Load Plink results
+#filename example: result.assoc.logistic
+plink.result<-read.table("filename.assoc.logistic",header=T,sep="",stringsAsFactors = F,check.names = F,fill=T,quote="")
+plink.result
+
+#manhattan plot
+manhattan(plink.result,chr="CHR",bp="BP",snp="SNP",p = "P", suggestiveline = -log10(1e-5), genomewideline = -log10(5e-8), ylim = c(0, 10),main = "Title", annotatePval = 0.0001)
+
+#Q-Q plot
+p_value= plink.result$P
+z = qnorm(p_value/ 2)
+lambda = round(median(z^2, na.rm = TRUE) / 0.45, 3)
+qq(plink.result$P, main = "Q-Q plot_log",sub=paste("lamda=",lambda))
+
+#Significant gene
+a<-plink.result %>%
+  filter(P < 0.0000001)
